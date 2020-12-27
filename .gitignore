@@ -131,3 +131,4 @@ dmypy.json
 
 # Own stuff
 lecture/
+.vscode
