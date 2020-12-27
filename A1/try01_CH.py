@@ -103,17 +103,18 @@ def get_A_inv(params):
 
 def calc(e_of_z, *addons):
     """
-    Input values are expectations of future values
-    diff is for whether to take the actual values or the differenced ones
+    e_of_z = input array with Y, pi, e
+    addons = tuple with (parameters, diff) where diff is bool for whether 
+                taking the difference or not
+
+                packaged this way because of the fsolve later
     """
 
     #Unpacking addons. It's in one for the fsolve later
     params, diff = addons
 
     # Unpacking values from matrix
-    EY = e_of_z[0]
-    Epi = e_of_z[1]
-    Ei = e_of_z[2]
+    EY, Epi, Ei = e_of_z
     
     first_line = EY - (1/params["sigma"]) * (- Epi)
     second_line = params["beta"] * Epi
@@ -134,12 +135,6 @@ def calc(e_of_z, *addons):
         return np.ravel(z)
 ###############################################################################
 ###############################################################################
-
-
-
-
-
-
 
 # Defining task 2.2 which saves the plot in the end
 def task2_2(init_mat, params):
@@ -187,3 +182,5 @@ if __name__ == "__main__":
     task2_7(params)
     print("------")
     task2_8(params)
+
+###############################################################################
