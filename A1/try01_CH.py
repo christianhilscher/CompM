@@ -77,15 +77,12 @@ def plot(res_mat):
     
     fig, axs = plt.subplots(3, figsize=(15, 6))
     
-
-    axs[0].plot(t, res_mat[:, 0])
-    axs[0].set_title("Y")
-
-    axs[1].plot(t, res_mat[:, 1])
-    axs[1].set_title("pi")
-
-    axs[2].plot(t, res_mat[:, 2])
-    axs[2].set_title("i")
+    titles = ["Y", "pi", "i"]
+    
+    # Looping through the variables
+    for p in np.arange(res_mat.shape[1]):
+        axs[p].plot(t, res_mat[:, p])
+        axs[p].set_title(titles[p])
 
     figname = output / "plot01"
     plt.savefig(figname)
