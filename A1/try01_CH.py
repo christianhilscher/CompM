@@ -5,6 +5,7 @@ First try of solving assignment 1
 from pathlib import Path
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy import optimize
 
 ###############################################################################
 # Specifying paths
@@ -100,7 +101,19 @@ def get_A_inv(params):
 
     return A_inv
 
-def calc(EY, Epi, Ei, params):
+def calc(e_of_z, *addons):
+    """
+    Input values are expectations of future values
+    diff is for whether to take the actual values or the differenced ones
+    """
+
+    #Unpacking addons. It's in one for the fsolve later
+    params, diff = addons
+
+    # Unpacking values from matrix
+    EY = e_of_z[0]
+    Epi = e_of_z[1]
+    Ei = e_of_z[2]
     
     first_line = EY - (1/params["sigma"]) * (- Epi)
     second_line = params["beta"] * Epi
@@ -111,9 +124,14 @@ def calc(EY, Epi, Ei, params):
                     [third_line]])
     
     A_inv = get_A_inv(params)
+
     z = np.dot(A_inv, B)
 
-    return z
+    # ravel to flatten matrix to array
+    if diff:
+        return e_of_z - np.ravel(z)
+    else:
+        return np.ravel(z)
 ###############################################################################
 ###############################################################################
 
@@ -124,23 +142,48 @@ def calc(EY, Epi, Ei, params):
 
 
 # Defining task 2.2 which saves the plot in the end
-def task2_2():
-
+def task2_2(init_mat, params):
     print("Starting with Task 2.2")
-    init_mat, params = setup()
+    
     res = loopinglouie(init_mat, params)
     plot(res)
     print("Completed Task 2.2")
 
-def task2_3():
+def task2_3(params):
+    print("Starting with tasks 2.3 - 2.5")
+    
+    values = np.array([0, 0, 0]) # Taking the values the previous thing converged to
+    spec = (params, False) # False here stands for not taking the difference
 
-    print("Starting with tasks 2.3 and following")
-    init_mat, params = setup()
-    res = calc(0, 0, 0, params) # Taking the values the previous thing converged to
+    res = calc(values, *spec) 
+    print(res)
+
+def task2_7(params):
+    print("Starting with task 2.7")
+    
+    values = np.array([0, 0, 0]) # Taking the values the previous thing converged to
+    spec = (params, True) # True here stands for taking the difference
+
+    res = calc(values, *spec) 
+    print(res)
+
+def task2_8(params):
+    print("Starting with task 2.8")
+
+    values = np.array([0, 0, 0]) # Taking the values the previous thing converged to
+    spec = (params, True) # True here stands for taking the difference
+    
+    res = optimize.fsolve(calc, x0=values, args=spec)
     print(res)
 
 if __name__ == "__main__":
+    init_mat, params = setup()
+    
     print("------")
-    task2_2()
+    task2_2(init_mat, params)
     print("------")
-    task2_3()
+    task2_3(params)
+    print("------")
+    task2_7(params)
+    print("------")
+    task2_8(params)
