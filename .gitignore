@@ -132,3 +132,12 @@ dmypy.json
 # Own stuff
 lecture/
 .vscode
+
+# Lucas own stuff 
+Lecture Slides/ 
+Problem Sets/ 
+AntragHD.pdf 
+BestätigungHD.pdf
+.DS_Store 
+
+
