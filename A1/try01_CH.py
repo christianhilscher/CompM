@@ -35,6 +35,10 @@ def setup():
     
     return init_mat, params
 
+###############################################################################
+###############################################################################
+# Task 2.2
+
 # Functions for calculating
 def get_i(pi_tplus1, Y_tplus1, params):
     i_t = params["phi_1"] * pi_tplus1 + params["phi_2"] * Y_tplus1
@@ -86,6 +90,38 @@ def plot(res_mat):
     plt.savefig(figname)
     print("Saved plot in output folder")
 ###############################################################################
+# Task 2.3 and following
+
+def get_A_inv(params):
+    A = np.matrix([[1, 0, 1/params["sigma"]],
+                    [params["kappa"], 1, 0],
+                    [0, 0, 1]])
+    A_inv = np.linalg.inv(A)
+
+    return A_inv
+
+def calc(EY, Epi, Ei, params):
+    
+    first_line = EY - (1/params["sigma"]) * (- Epi)
+    second_line = params["beta"] * Epi
+    third_line = params["phi_1"] * Epi + params["phi_2"] * EY
+
+    B = np.matrix([[first_line],
+                    [second_line],
+                    [third_line]])
+    
+    A_inv = get_A_inv(params)
+    z = np.dot(A_inv, B)
+
+    return z
+###############################################################################
+###############################################################################
+
+
+
+
+
+
 
 # Defining task 2.2 which saves the plot in the end
 def task2_2():
@@ -96,6 +132,15 @@ def task2_2():
     plot(res)
     print("Completed Task 2.2")
 
+def task2_3():
+
+    print("Starting with tasks 2.3 and following")
+    init_mat, params = setup()
+    res = calc(0, 0, 0, params) # Taking the values the previous thing converged to
+    print(res)
 
 if __name__ == "__main__":
+    print("------")
     task2_2()
+    print("------")
+    task2_3()
