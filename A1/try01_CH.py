@@ -63,6 +63,7 @@ def loopinglouie(mat, params):
         Y[t] = get_Y(pi[t-1], Y[t-1], i[t], params)
         pi[t] = get_pi(pi[t-1], Y[t], params)
     
+    print("Ran successfully")
     return np.matrix([Y, pi, i]).transpose()
 
 # Functions for plotting
@@ -83,10 +84,18 @@ def plot(res_mat):
 
     figname = output / "plot01"
     plt.savefig(figname)
+    print("Saved plot in output folder")
 ###############################################################################
 
-if __name__ == "__main__":
+# Defining task 2.2 which saves the plot in the end
+def task2_2():
 
+    print("Starting with Task 2.2")
     init_mat, params = setup()
     res = loopinglouie(init_mat, params)
     plot(res)
+    print("Completed Task 2.2")
+
+
+if __name__ == "__main__":
+    task2_2()
