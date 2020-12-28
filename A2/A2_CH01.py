@@ -73,17 +73,37 @@ def get_C0C1(A_inv, B):
     
     # In case epsilon != 0, z_t = C0 + C1 which is equal to B = (1, 0, 0) 
     # Is this true??
-    adjusted_mat = B + np.matrix([[1], 
+    output_shock = B + np.matrix([[1], 
                                   [0], 
                                   [0]])
     
-    C0C1 = np.dot(A_inv, adjusted_mat)
+    C0C1 = np.dot(A_inv, output_shock)
     C1 = C0C1 - C0
     
     return [C0, C1]
+
+def get_C0C1C2(A_inv, B):
+    # If epsilon and eta == 0, z_t = C0 which is A^-1 * B
+    C0 = np.dot(A_inv, B)
+    
+    # For getting C1, assume eta==0, epsilon==1, where epsilon is the shock to output
+    output_shock = B + np.matrix([[1],
+                                  [0],
+                                  [0]])
+    C0C1 = np.dot(A_inv, output_shock)
+    C1 = C0C1 - C0
+    
+    # For getting C2, assume that epsilon==0 and eta==1
+    inflation_shock = B + np.matrix([[0],
+                                     [1],
+                                     [0]])
+    C0C2 = np.dot(A_inv, inflation_shock)
+    C2 = C0C2 - C0
+    
+    return [C0, C1, C2]
 ###############################################################################
 # Functions for calculating 
-def calc(e_of_z, params):
+def calc_oneshock(e_of_z, params):
     
     B = get_B(e_of_z[0:3], params)
     A_inv = get_A_inv(params)
@@ -93,14 +113,36 @@ def calc(e_of_z, params):
     
     return C_calculated - e_of_z
 
-def task2_1(params):
-    print("Task 2.1:")
+def calc_twoshocks(e_of_z, params):
     
-    initial_vals = [0, 0, 0, 0, 0, 0]
-    res = optimize.fsolve(calc, initial_vals, params)
-    print(f"Result for C0: {res[0:3]} \n Result for C1: {res[3:6]}")
+    B = get_B(e_of_z[0:3], params)
+    A_inv = get_A_inv(params)
+    
+    C0, C1, C2 = get_C0C1C2(A_inv, B)
+    C_calculated = np.array([C0, C1, C2]).flatten() #Putting it together into a 1D array
+    
+    return C_calculated - e_of_z
 
+def task2_2(params):
+    print("Task 2.2:")
+    
+    initial_vals = np.zeros(6)
+    res = optimize.fsolve(func = calc_oneshock, 
+                          x0 = initial_vals,
+                          args = params)
+    print(f"Result for C0: {res[0:3]} \n Result for C1: {res[3:6]}")
+    
+def task2_3(params):
+    print("Task 2.3:")
+    
+    initial_vals = np.zeros(9)
+    res = optimize.fsolve(func = calc_twoshocks, 
+                          x0 = initial_vals, 
+                          args = params)
+    
+    print(f"Result for C0: {res[0:3]} \n Result for C1: {res[3:6]} \n Result for C2: {res[6:9]}")
 ###############################################################################
 if __name__ == "__main__":
     mat, params = setup()
-    task2_1(params)
+    task2_2(params)
+    task2_3(params)
