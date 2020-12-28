@@ -26,7 +26,6 @@ def setup(T=1000):
     Y_0 = 100
     pi_0 = 1
     i_0 = 1
-
     init_mat[0,:] = [Y_0, pi_0, i_0]
 
     # Setting constants
@@ -69,16 +68,16 @@ def get_B(vals, params):
 
 def get_C0C1(A_inv, B):
     
-    # In case epsilon==0 -> z_t = C0
+    # In case epsilon==0 -> z_t = C0 which is just A^-1 * B
     C0 = np.dot(A_inv, B)
     
-    # In case epsilon != 0, z_t = C0 + C1 which is equal to B = (1, 0, 0)
+    # In case epsilon != 0, z_t = C0 + C1 which is equal to B = (1, 0, 0) 
+    # Is this true??
     adjusted_mat = B + np.matrix([[1], 
                                   [0], 
                                   [0]])
     
     C0C1 = np.dot(A_inv, adjusted_mat)
-    
     C1 = C0C1 - C0
     
     return [C0, C1]
@@ -90,8 +89,7 @@ def calc(e_of_z, params):
     A_inv = get_A_inv(params)
     
     C0, C1 = get_C0C1(A_inv, B)
-    
-    C_calculated = np.array([C0, C1]).flatten()
+    C_calculated = np.array([C0, C1]).flatten() #Putting it together into a 1D array
     
     return C_calculated - e_of_z
 
@@ -100,7 +98,7 @@ def task2_1(params):
     
     initial_vals = [0, 0, 0, 0, 0,0]
     res = optimize.fsolve(calc, initial_vals, params)
-    print(res)
+    print(f"Result for C0: {res[0:3]} \n Result for C1: {res[3:6]}")
 
 ###############################################################################
 if __name__ == "__main__":
