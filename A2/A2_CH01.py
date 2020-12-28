@@ -96,7 +96,7 @@ def calc(e_of_z, params):
 def task2_1(params):
     print("Task 2.1:")
     
-    initial_vals = [0, 0, 0, 0, 0,0]
+    initial_vals = [0, 0, 0, 0, 0, 0]
     res = optimize.fsolve(calc, initial_vals, params)
     print(f"Result for C0: {res[0:3]} \n Result for C1: {res[3:6]}")
 
