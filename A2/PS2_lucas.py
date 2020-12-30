@@ -63,8 +63,7 @@ def A_alt(params):
 #* new functions: Task 2.1
 def get_zt(input_arr, shock = True): 
     '''
-    Calculate z_t using guesses for C0 and C1. We have A z_t = B <=> z_t = inv(A) * B = C0 + C1e_t.
-    Thus, B from before without shock plus [1, 0, 0]' is new B containing also e_t.  
+    Calculate z_t using guesses for C0 and C1. 
     *input_arr = vector of length 6 containing first guesses
     '''
     #get parameters for calculating A
@@ -99,10 +98,9 @@ def get_C0C1(input_arr):
     return C0C1
 
 #* new functions: Task 2.2
-def get_zt(input_arr, shock = True): 
+def get_zt_2(input_arr, shock = True): 
     '''
-    Calculate z_t using guesses for C0 and C1. We have A z_t = B <=> z_t = inv(A) * B = C0 + C1e_t.
-    Thus, B from before without shock plus [1, 0, 0]' is new B containing also e_t.  
+    Calculate z_t using guesses for C0, C1 and C2. 
     *input_arr = vector of length 6 containing first guesses
     '''
     #get parameters for calculating A
@@ -126,7 +124,18 @@ def get_C0C1C2(input_arr):
     and C1 = inv(A)*(1,0,0)' and C2 = inv(A)*(0, 1, 0)'. Use steps as described in PS. 
     *input_arr = vector of length 9 containing first guesses
     '''
+    #first, get C0 by getting z_t with no shocks 
+    C0 = get_zt_2(input_arr, shock = False) 
+    #now, get C1 by getting z_t with shock e_t = 1 and u_t = 0
+    zt_w_et = get_zt(input_arr, shock = True)
+    C1 = zt_w_et - C0
+    #next up, set u_t = 1 and e_t = 0 
+    zt_w_ut = get_zt_2(input_arr, shock = True)
+    C2 = zt_w_ut - C0
+    #now, bind everything together 
+    C0C1C2 = np.array([C0, C1, C2]).flatten()
     
+    return C0C1C2
 
 def get_diff(input_arr, one_shock = True): 
     if one_shock: 
@@ -145,7 +154,7 @@ def solve(start, one_shock = True):
         print(f'C0: {C0} \n'
                 f'C1: {C1}')
     else: 
-        result = fsolve(get_diff, start, one_shock = False) 
+        result = fsolve(get_diff, start, False) 
         C0 = result[:3]
         C1 = result[3:6]
         C2 = result[6:]
@@ -153,4 +162,8 @@ def solve(start, one_shock = True):
                 f'C1: {C1} \n'
                 f'C2: {C2}')
 
-start = np.array([0.8, 0.1, 0.7, 0.3, 0.2, 0.5])
+start_oneshock = np.array([0.8, 0.1, 0.7, 0.3, 0.2, 0.5])
+start_twoshock = np.array([0.8, 0.1, 0.7, 0.3, 0.2, 0.5, 0.3, 0.4, 0.2])
+
+solve(start_oneshock)
+solve(start_twoshock, one_shock = False)
