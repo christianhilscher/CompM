@@ -61,125 +61,96 @@ def A_alt(params):
     return A, A_inv
 
 #* new functions: Task 2.1
-def get_zt_w_shock(input_arr): 
+def get_zt(input_arr, shock = True): 
     '''
-    Get z_t = inv(A)*B with shock e_t affecting Y_t in IS curve.
-    
-    *input_arr = vector containing [E_Yt1, E_pit1, E_it1, C1_1, C1_2, C1_3]
+    Calculate z_t using guesses for C0 and C1. We have A z_t = B <=> z_t = inv(A) * B = C0 + C1e_t.
+    Thus, B from before without shock plus [1, 0, 0]' is new B containing also e_t.  
+    *input_arr = vector of length 6 containing first guesses
     '''
+    #get parameters for calculating A
     params = setup()[1]
+    #get inverse of A
     A_inv = A(params)[1]
-    B = np.array([input_arr[0] + 1/params['sigma'] * input_arr[1] + input_arr[3], 
+    #get B
+    B = np.array([input_arr[0] + 1/params['sigma'] * input_arr[1], 
                     params['beta'] * input_arr[1], 
                     params['phi1'] * input_arr[1] + params['phi2'] * input_arr[0]])
-    z_t = np.dot(A_inv, B)
-    '''
-    A_inv_alt = A_alt(params)[1]
-    B_alt = np.array([input_arr[0] + 1/params['sigma'] * input_arr[1] + input_arr[3], 
-                    params['beta'] * input_arr[1] + 
-                    params['kappa'] * (input_arr[0] + 1/params['sigma'] * input_arr[1] + input_arr[3]), 
-                    params['phi1'] * input_arr[1] + params['phi2'] * input_arr[0]])
-    z_t_alt = np.dot(A_inv_alt, B_alt)'''
-    return z_t#, z_t_alt
+    #if shock e_t exists, vector (1, 0, 0) must be added to B
+    shock_array = np.array([int(shock), 0, 0])
+    B_shock = B + shock_array
+    #now z_t using z_t + inv(A) * B
+    z_t = np.dot(A_inv, B_shock)
+    return z_t
 
 def get_C0C1(input_arr): 
     '''
-    C0 is z_t w/ e_t = 0.
-    Calculate z_t once with error e_t = 0 and once with error e_t = 1
-    and take difference to find C1. 
-    
-    *input_arr = np.array that contains [E_Yt1, E_pit1, E_it1, C1_1, C1_2, C1_3]
+    Find C0 and C1 using first guesses for C0 and C1. Note that C0 = inv(A)*B 
+    and C1 = inv(A)*(1,0,0)'. Use steps as described in PS. 
+    *input_arr = vector of length 6 containing first guesses
     '''
-    #first: get z_t with e_t = 0, set e_t = 0 in input
-    input_arr[3] = 0
-    #and calculate z_t
-    zt_noshock = get_zt_w_shock(input_arr)
-    #now z_t with e_t = 1
-    input_arr[3] = 1
-    zt_shock = get_zt_w_shock(input_arr)
-    
-    #C0 is z_t with e_t = 0
-    C0 = zt_noshock
-    #C1 is difference between z_t with shock and z_t without shock
-    C1 = zt_shock - zt_noshock
-    
-    return C0, C1
+    #first get z_t when e_t = 0, this will be C0
+    z_t_noshock = get_zt(input_arr, shock = False)
+    C0 = z_t_noshock
+    #then get z_t with shock e_t = 1, which will be C0 + C1
+    z_t_shock = get_zt(input_arr, shock = True)
+    #next, get C1 by substracting z_t_noshock from z_t_shock 
+    C1 = z_t_shock - z_t_noshock
+    C0C1 = np.array([C0, C1]).flatten()
+    return C0C1
 
-#* functions for Task 2.3: z_t = inv(A)*B has to be adjusted and then need function to get C0, C1 and C2
-def get_zt_2shocks(input_arr): 
+#* new functions: Task 2.2
+def get_zt(input_arr, shock = True): 
     '''
-    Get z_t = inv(A)*B with shock to output AND inflation. 
-    
-    *input_arr = np.array that contains [E_Yt1, E_pit1, E_it1, C1_1, C1_2, C1_3, C2_1, C2_2, C2_3]
+    Calculate z_t using guesses for C0 and C1. We have A z_t = B <=> z_t = inv(A) * B = C0 + C1e_t.
+    Thus, B from before without shock plus [1, 0, 0]' is new B containing also e_t.  
+    *input_arr = vector of length 6 containing first guesses
     '''
+    #get parameters for calculating A
     params = setup()[1]
-    #A is the same as with one shock
+    #get inverse of A
     A_inv = A(params)[1]
-    #only second element of B adjusts compared to one shock
-    B = np.array([input_arr[0] + 1/params['sigma'] * input_arr[1] + input_arr[3], 
-                #HERE NEW: shock to pi (u_t) = input_arr[4]
-                params['beta'] * input_arr[1] + input_arr[4], 
-                params['phi1'] * input_arr[1] + params['phi2'] * input_arr[0]])
-    #calc z_t
-    z_t = np.dot(A_inv, B)
-    
+    #get B
+    B = np.array([input_arr[0] + 1/params['sigma'] * input_arr[1], 
+                    params['beta'] * input_arr[1], 
+                    params['phi1'] * input_arr[1] + params['phi2'] * input_arr[0]])
+    #if shock u_t exists, vector (0, 1, 0) must be added to B
+    shock_array = np.array([0, int(shock), 0])
+    B_shock = B + shock_array
+    #now z_t using z_t + inv(A) * B
+    z_t = np.dot(A_inv, B_shock)
     return z_t
 
 def get_C0C1C2(input_arr): 
     '''
-    C0 is z_t w/ e_t = 0.
-    Calculate z_t once with error e_t = u_t = 0 and once with error e_t = 1, u_t = 0
-    and take difference to find C1. 
-    Calculate z_t with error e_t = u_t = 0 and once with error 
-    *input_arr = np.array that contains [E_Yt1, E_pit1, E_it1, C1_1, C1_2, C1_3, C2_1, C2_2, C2_3], 
-    where e_t = shock to output, u_t = shock to inflation, eps_t = shock to nominal interest;
-    note that eps_t not considered (as assumed to be zero)    
+    Find C0, C1 and C2 using first guesses for them. Note that C0 = inv(A)*B 
+    and C1 = inv(A)*(1,0,0)' and C2 = inv(A)*(0, 1, 0)'. Use steps as described in PS. 
+    *input_arr = vector of length 9 containing first guesses
     '''
     
 
-#* function the same for all
-def get_diff(expec, input_arr, one_shock = True): 
-    '''
-    Get difference between implied C0 and C1 obtained from get_C0C1() and
-    values used for expecations. 
-    
-    *expec = np.array containing first guesses for C0 and C1 
-    *input_arr = input array for get_C0C1()
-    *one_shock = Bool, define whether consider only shock to Y (Task 2.2) or also shock to pi; 
-                True by default
-    '''
-    if one_shock:
-        #first get the implied values
-        implied = np.array(get_C0C1(input_arr))
-        #flatten C0 and C1 into a 1D array with C0, C1 
-        implied = implied.flatten()
+def get_diff(input_arr, one_shock = True): 
+    if one_shock: 
+        implied = get_C0C1(input_arr)
+        diff = input_arr - implied 
     else: 
-        #first get the implied values
-        implied = np.array(get_C0C1C2(input_arr))
-        #flatten C0 and C1 into a 1D array with C0, C1, C2
-        implied = implied.flatten()
-    
-    #get difference 
-    diff = expec - implied 
-    
+        implied = get_C0C1C2(input_arr)
+        diff = input_arr - implied 
     return diff
 
-def calcs(epec, input_arr, one_shock = True): 
-    '''
-    Do calculations and print results in a nice manner.
-    
-    *expec = np.array containing first guesses for C0 and C1 
-    *input_arr = input array for get_C0C1()
-    '''
-    
+def solve(start, one_shock = True): 
+    if one_shock:
+        result = fsolve(get_diff, start) 
+        C0 = result[:3]
+        C1 = result[3:]
+        print(f'C0: {C0} \n'
+                f'C1: {C1}')
+    else: 
+        result = fsolve(get_diff, start, one_shock = False) 
+        C0 = result[:3]
+        C1 = result[3:6]
+        C2 = result[6:]
+        print(f'C0: {C0} \n'
+                f'C1: {C1} \n'
+                f'C2: {C2}')
 
-#*##############
-#! TASKS
-#*##############
-
-#* 2.2
-#use steady state from before without shock
-inputs = np.array([0, 0, 0, 0, 0, 0])
-solved = fsolve(get_diff, np.array([100, 1, 1, 10, 50, 0]), inputs)
-
-#* 2.3
+start = np.array([0.8, 0.1, 0.7, 0.3, 0.2, 0.5])
