@@ -65,7 +65,7 @@ def get_zt_w_shock(input_arr):
     '''
     Get z_t = inv(A)*B with shock e_t affecting Y_t in IS curve.
     
-    *input_arr = vector containing [E_Yt1, E_pit1, E_it1, e_t, u_t, eps_t]
+    *input_arr = vector containing [E_Yt1, E_pit1, E_it1, C1_1, C1_2, C1_3]
     '''
     params = setup()[1]
     A_inv = A(params)[1]
@@ -88,9 +88,7 @@ def get_C0C1(input_arr):
     Calculate z_t once with error e_t = 0 and once with error e_t = 1
     and take difference to find C1. 
     
-    *input_arr = np.array that contains [E_Yt1, E_pit1, E_it1, e_t, u_t, eps_t], 
-    where e_t = shock to output, u_t = shock to inflation, eps_t = shock to nominal interest;
-    note that u_t, eps_t not considered (as assumed to be zero)
+    *input_arr = np.array that contains [E_Yt1, E_pit1, E_it1, C1_1, C1_2, C1_3]
     '''
     #first: get z_t with e_t = 0, set e_t = 0 in input
     input_arr[3] = 0
@@ -112,9 +110,7 @@ def get_zt_2shocks(input_arr):
     '''
     Get z_t = inv(A)*B with shock to output AND inflation. 
     
-    *input_arr = np.array that contains [E_Yt1, E_pit1, E_it1, e_t, u_t, eps_t], 
-    where e_t = shock to output, u_t = shock to inflation, eps_t = shock to nominal interest;
-    note that u_t not considered (as assumed to be zero)
+    *input_arr = np.array that contains [E_Yt1, E_pit1, E_it1, C1_1, C1_2, C1_3, C2_1, C2_2, C2_3]
     '''
     params = setup()[1]
     #A is the same as with one shock
@@ -134,8 +130,8 @@ def get_C0C1C2(input_arr):
     C0 is z_t w/ e_t = 0.
     Calculate z_t once with error e_t = u_t = 0 and once with error e_t = 1, u_t = 0
     and take difference to find C1. 
-    Calculate z_t with error e_t = u_t
-    *input_arr = np.array that contains [E_Yt1, E_pit1, E_it1, e_t, u_t, eps_t], 
+    Calculate z_t with error e_t = u_t = 0 and once with error 
+    *input_arr = np.array that contains [E_Yt1, E_pit1, E_it1, C1_1, C1_2, C1_3, C2_1, C2_2, C2_3], 
     where e_t = shock to output, u_t = shock to inflation, eps_t = shock to nominal interest;
     note that eps_t not considered (as assumed to be zero)    
     '''
