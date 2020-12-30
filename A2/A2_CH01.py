@@ -23,9 +23,9 @@ def setup(T=1000):
 
     init_mat = np.empty((T, 3)) # rows are time periods
 
-    Y_0 = 100
-    pi_0 = 1
-    i_0 = 1
+    Y_0 = 0.5
+    pi_0 = 0.5
+    i_0 = 0.5
     init_mat[0,:] = [Y_0, pi_0, i_0]
 
     # Setting constants
@@ -48,7 +48,7 @@ def get_A_inv(params):
                    [0, 0, 1]])
     
     A_inv = np.linalg.inv(A)
-
+    
     return A_inv
 
 def get_B(vals, params):
@@ -126,7 +126,7 @@ def calc_twoshocks(e_of_z, params):
 def task2_2(params):
     print("Task 2.2:")
     
-    initial_vals = np.zeros(6)
+    initial_vals = np.random.uniform(low=-1, high=1, size=6)
     res = optimize.fsolve(func = calc_oneshock, 
                           x0 = initial_vals,
                           args = params)
@@ -135,7 +135,7 @@ def task2_2(params):
 def task2_3(params):
     print("Task 2.3:")
     
-    initial_vals = np.zeros(9)
+    initial_vals = np.random.uniform(low=-1, high=1, size=9)
     res = optimize.fsolve(func = calc_twoshocks, 
                           x0 = initial_vals, 
                           args = params)
@@ -143,6 +143,7 @@ def task2_3(params):
     print(f"Result for C0: {res[0:3]} \n Result for C1: {res[3:6]} \n Result for C2: {res[6:9]}")
 ###############################################################################
 if __name__ == "__main__":
+    
     mat, params = setup()
     task2_2(params)
     task2_3(params)
