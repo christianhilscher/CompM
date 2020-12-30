@@ -47,20 +47,7 @@ def A(params):
     A_inv = np.linalg.inv(A)
     return A, A_inv
 
-#* potential alternative definition (leads to same result)
-def A_alt(params): 
-    '''
-    Alternative specification of A in which IS plugged into PC to remove 
-    e_t from LHS of A z_t = B. 
-    
-    *params = dictionary of params obtained from setup()
-    '''
-    A = np.array([[1, 0, 1/params['sigma']], [0, 1, params['kappa']/params['sigma']], 
-                    [0, 0, 1]])
-    A_inv = np.linalg.inv(A)
-    return A, A_inv
-
-#* new functions: Task 2.1
+#* new functions: Task 2.2
 def get_zt(input_arr, shock = True): 
     '''
     Calculate z_t using guesses for C0 and C1. 
@@ -97,7 +84,7 @@ def get_C0C1(input_arr):
     C0C1 = np.array([C0, C1]).flatten()
     return C0C1
 
-#* new functions: Task 2.2
+#* new functions: Task 2.3
 def get_zt_2(input_arr, shock = True): 
     '''
     Calculate z_t using guesses for C0, C1 and C2. 
@@ -161,6 +148,10 @@ def solve(start, one_shock = True):
         print(f'C0: {C0} \n'
                 f'C1: {C1} \n'
                 f'C2: {C2}')
+
+#*##############
+#! CALCULATIONS
+#*##############
 
 start_oneshock = np.array([0.8, 0.1, 0.7, 0.3, 0.2, 0.5])
 start_twoshock = np.array([0.8, 0.1, 0.7, 0.3, 0.2, 0.5, 0.3, 0.4, 0.2])
