@@ -136,7 +136,6 @@ def convergence_plot(T, i, pi, Y):
     *pi = np.array containing inflation rate path 
     *Y = np.array containing output path 
     '''
-    T = 1000
     x = list(range(0, T))
     fig, axs = plt.subplots(3)
     fig.suptitle('Convergence paths')
