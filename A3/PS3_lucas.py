@@ -176,8 +176,9 @@ def plot(series, T, subtitles = None, title = 'Convergence Paths'):
         ax.plot(x, vals)
         ax.set_title(sub, fontsize = 30)
     plt.subplots_adjust(hspace = 0.8)
-    plt.show()
     plt.savefig(out / 'convergence_paths.png')
+    plt.show()
+
 
 
 #*##############
