@@ -201,5 +201,6 @@ def run_A2():
 ###############################################################################
 if __name__ == "__main__":
     
-    make_paths()
+    # No need for paths since not saving any plots
+    # make_paths()
     run_A2()
