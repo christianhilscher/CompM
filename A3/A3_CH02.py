@@ -11,11 +11,12 @@ import matplotlib.pyplot as plt
 
 ###############################################################################
 # Specifying paths
-dir = Path.cwd()
-current_folder = dir / "A3"
+def make_paths():
+    dir = Path.cwd()
+    current_folder = dir / "A3"
 
-output = current_folder / "output"
-output.mkdir(parents=True, exist_ok=True)
+    output = current_folder / "output"
+    output.mkdir(parents=True, exist_ok=True)
 
 ###############################################################################
 # Setting up hardcoded values
@@ -182,7 +183,8 @@ def run_A3():
     actual output and inflation vary over time. Nominal interest rate however
     is not influenced and therefore quickly converges to 0.
     Epxected output and inflation also converge quite quickly to their steady 
-    state
+    state which is 0.
+    The shocks to output vary over time since they are drawn ~ N(0, 1). 
     """
 
 
@@ -190,4 +192,5 @@ def run_A3():
 ###############################################################################
 if __name__ == "__main__":
     
+    make_paths()
     run_A3()

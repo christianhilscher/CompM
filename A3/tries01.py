@@ -10,9 +10,9 @@ from scipy import optimize
 import matplotlib.pyplot as plt
 
 # Initializing values
-T = 1000
+T = 10000
 shocks = np.random.normal(size=T)
-shocks = np.zeros(T)
+#shocks = np.zeros(T)
 
 C_hat_mat = np.empty(shape=(2, 3, T))
 R_mat = np.empty(shape=(2, 2, T))
@@ -28,50 +28,6 @@ params = {"sigma": 2,
           "phi2": 0.2,
           "gamma": 0.05}
 
-def get_A_inv(params):
-    """
-    Calculating the inverse of the matrix A where A * z_t = B
-    Inputs: 
-        - params: All the parameters
-    """
-    A = np.matrix([[1, 0, 1/params["sigma"]],
-                   [- params["kappa"], 1, 0],
-                   [0, 0, 1]])
-    
-    A_inv = np.linalg.inv(A)
-    
-    return A_inv
-
-def get_B(vals, params):
-    
-    # Unpacking 
-    E_Y, E_pi, E_i = vals
-    
-    first_line = E_Y + (1/params["sigma"]) * E_pi
-    second_line = params["beta"] * E_pi
-    third_line = params["phi1"] * E_pi + params["phi2"] * E_Y
-    
-    B = np.matrix([[first_line],
-                   [second_line],
-                   [third_line]])
-    
-    return B
-
-def get_C0C1(A_inv, B):
-    
-    # In case epsilon==0 -> z_t = C0 which is just A^-1 * B
-    C0 = np.dot(A_inv, B)
-    
-    # In case epsilon != 0, z_t = C0 + C1 which is equal to B = (1, 0, 0) 
-    # Is this true??
-    output_shock = B + np.matrix([[1], 
-                                  [0], 
-                                  [0]])
-    
-    C0C1 = np.dot(A_inv, output_shock)
-    C1 = C0C1 - C0
-    
-    return [C0, C1]
 
 def get_i(E_Y, E_pi, params):
     
@@ -98,7 +54,7 @@ def update_C(C_old, R_new, z, eta, params):
     firstpart = params["gamma"] * np.linalg.inv(R_new) @eta
     secondpart = z - np.transpose(eta) @ C_old
 
-    C_new = C_old - firstpart @ secondpart
+    C_new = C_old + firstpart @ secondpart
     return C_new
 
 def calc_current_vals(E_z, epsilon, params):
@@ -114,10 +70,11 @@ def loopinglouie(C_hat, R, shocks, params):
 
     periods = len(shocks) # Inferring time periods from shock array
     z_t = np.empty(shape=(3, periods)) # Saving actual outcome of economy
+    z_t[:, 0] = C_hat[0, :, 0] # Values of first period are same as initial guesses
     
     for t in range(1, periods):
         # Expectations are in first line since E[z_t] = C0hat
-        expectations = C_hat[0, :, t]
+        expectations = C_hat[0, :, t-1]
 
         # Calculate values in period t
         z_t[:, t] = calc_current_vals(expectations, shocks[t], params)
@@ -136,21 +93,30 @@ def loopinglouie(C_hat, R, shocks, params):
                                   eta,
                                   params)
         
-        # Saving values to result matrix
-
+    # Saving values to result matrix
     return C_hat, R, z_t
 
+def plot(res_mat):
+    t = np.arange(res_mat.shape[1]) # Time periods will be the x-axis
+    
+    fig, axs = plt.subplots(3, figsize=(15, 6))
+    
+    titles = ["Y", "pi", "i"]
+    
+    # Looping through the variables
+    for p in np.arange(res_mat.shape[0]):
+        axs[p].plot(t, res_mat[p, :])
+        axs[p].set_title(titles[p])
+
+    plt.show()
+    # figname = output / "plot01"
+    # plt.savefig(figname)
+    # print("Saved plot in output folder")
+
+###############################################################################
 a, b, c = loopinglouie(C_hat = C_hat_mat,
                        R = R_mat,
                        shocks = shocks,
                        params = params)
 
-###
-
-C_hat = init_vals
-R = init_R
-shocks = shocks
-result_mat = res
-params = params
-
-
+plot(c)
