@@ -17,6 +17,8 @@ def make_paths():
 
     output = current_folder / "output"
     output.mkdir(parents=True, exist_ok=True)
+    
+    return output
 
 ###############################################################################
 # Setting up hardcoded values
@@ -132,7 +134,7 @@ def repackage(C_hat, z_t, shocks):
     
     return plot_matrix, fig_titles
 
-def plot(res_mat, titles):
+def plot(res_mat, titles, output_path):
     t = np.arange(res_mat.shape[1]) # Time periods will be the x-axis
     n_plots = res_mat.shape[0]
     
@@ -144,14 +146,14 @@ def plot(res_mat, titles):
         axs[p].plot(t, res_mat[p, :])
         axs[p].set_title(titles[p])
 
-    figname = output / "plot01"
+    figname = output_path / "plot01"
     plt.savefig(figname)
     print("Saved plot in output folder")
 
 ###############################################################################
 # Defining tasks
 
-def run_A3():
+def run_A3(output_path):
     
     # Task 3.1 and 3.2
     # Using random numbers as intial values
@@ -175,7 +177,7 @@ def run_A3():
     plot_mat, fig_titles = repackage(C_results,
                                      z_results,
                                      shocks)
-    plot(plot_mat, fig_titles)
+    plot(plot_mat, fig_titles, output_path)
     
     # Task 3.6
     """
@@ -192,5 +194,5 @@ def run_A3():
 ###############################################################################
 if __name__ == "__main__":
     
-    make_paths()
-    run_A3()
+    output_path = make_paths()
+    run_A3(output_path)
