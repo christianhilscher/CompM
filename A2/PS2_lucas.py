@@ -1,3 +1,8 @@
+'''
+Lucas Cruz Fernandez - University of Mannheim 
+
+University of Heidelberg Student Number: 6000502
+'''
 import numpy as np 
 from pathlib import Path
 import matplotlib.pyplot as plt
