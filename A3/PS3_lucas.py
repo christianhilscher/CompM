@@ -180,7 +180,6 @@ def plot(series, T, subtitles = None, title = 'Convergence Paths'):
     plt.show()
 
 
-
 #*##############
 #! CALCULATIONS
 #*##############
