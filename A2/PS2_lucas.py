@@ -28,6 +28,7 @@ def setup(T = 1000):
     #set inital values in matrix 
     for j, val in zip(range(3), [i0, pi0, Y0]):
         mat[0, j] = val
+    #set paramater to given values
     params = {'sigma': 2, 
                 'kappa': 0.3, 
                 'beta': 0.99, 
@@ -37,8 +38,8 @@ def setup(T = 1000):
 
 def A(params): 
     '''
-    Get matrix A as derived before such that A z_t = B from model equations, where 
-    z_t = [Y_t, pi_t, i_t].
+    Get matrix A as derived such that A z_t = B from model equations, where 
+    z_t = [Y_t, pi_t, i_t]. 
     
     *params = dictionary of params obtained from setup()
     '''
@@ -47,7 +48,7 @@ def A(params):
     A_inv = np.linalg.inv(A)
     return A, A_inv
 
-#* new functions: Task 2.2
+#* new functions: Task 1
 def get_zt(input_arr, shock = True): 
     '''
     Calculate z_t using guesses for C0 and C1. 
@@ -62,6 +63,7 @@ def get_zt(input_arr, shock = True):
                     params['beta'] * input_arr[1], 
                     params['phi1'] * input_arr[1] + params['phi2'] * input_arr[0]])
     #if shock e_t exists, vector (1, 0, 0) must be added to B
+    #int(Bool) becomes 1 if Bool == True
     shock_array = np.array([int(shock), 0, 0])
     B_shock = B + shock_array
     #now z_t using z_t + inv(A) * B
@@ -125,15 +127,33 @@ def get_C0C1C2(input_arr):
     return C0C1C2
 
 def get_diff(input_arr, one_shock = True): 
+    '''
+    Function to calculate difference between implied values and 
+    values used for expecation.
+    
+    *input_arr = vector of length 6 containing first guesses if one_shock == True
+    OR length 9 necessary if two shocks used (one_shock == False).
+    *one_shock = True if model with only one shock, i.e. only shock to output, if False use model 
+    with shock to output and inflation.
+    '''
     if one_shock: 
         implied = get_C0C1(input_arr)
         diff = input_arr - implied 
     else: 
         implied = get_C0C1C2(input_arr)
         diff = input_arr - implied 
+    
     return diff
 
 def solve(start, one_shock = True): 
+    '''
+    Use starting values supplied and apply fsolve() to get_diff() and
+    print results for C0 and C1.
+    
+    *start = starting values/first guess array for C0 and C1 
+    *one_shock = True if model with only one shock, i.e. only shock to output, if False use model 
+    with shock to output and inflation.
+    '''
     if one_shock:
         result = fsolve(get_diff, start) 
         C0 = result[:3]
@@ -153,8 +173,19 @@ def solve(start, one_shock = True):
 #! CALCULATIONS
 #*##############
 
-start_oneshock = np.array([0.8, 0.1, 0.7, 0.3, 0.2, 0.5])
-start_twoshock = np.array([0.8, 0.1, 0.7, 0.3, 0.2, 0.5, 0.3, 0.4, 0.2])
-
+#* Task 2: model with shock to output
+#use some random values as starting guess - drawn from a uniform(-1, 1) distribution
+start_oneshock = np.random.uniform(low = -1, high = 1, size = 6)
+#run solve function, prints results for C0 and C1 
 solve(start_oneshock)
+'''
+C0 is the same as in PS1, i.e. [0, 0, 0]. This should be expected as C0 is the steady 
+part of z_t, which we calculated before. Meanwhile, C1 shows the reaction of the variables in z_t 
+to the output shock - if there is no reaction to the shock, then the same steady state
+should be reached as in the last assignment.
+'''
+
+#* Task 3: model with two shocks
+#use some random values as starting guess - drawn from a uniform(-1, 1) distribution
+start_twoshock = np.random.uniform(low = -1, high = 1, size = 9)
 solve(start_twoshock, one_shock = False)
