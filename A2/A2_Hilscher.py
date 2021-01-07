@@ -1,7 +1,15 @@
 """
-28.12.2020
+04.01.2021
+Christian Hilscher
 
-First version of solving Assignment 2 which is to be handed in
+UniMA Matr. #: 1570550
+UniHD #: 6000506
+
+Final version of solving Assignment 2 which is to be handed in
+
+First the individual functions are defined
+At the end there is a function called "run_A2()" which also contains the solutions
+as comments.
 """
 
 from pathlib import Path
@@ -128,29 +136,14 @@ def calc_twoshocks(e_of_z, params):
     A_inv = get_A_inv(params)
     
     C0, C1, C2 = get_C0C1C2(A_inv, B)
-    C_calculated = np.array([C0, C1, C2]).flatten() #Putting it together into a 1D array
-    
+    # Putting it together into a 1D array
+    C_calculated = np.array([C0, C1, C2]).flatten() 
     return C_calculated - e_of_z
 
-def task2_2(params):
-    print("Task 2.2:")
-    
-    initial_vals = np.random.uniform(low=-1, high=1, size=6)
-    res = optimize.fsolve(func = calc_oneshock, 
-                          x0 = initial_vals,
-                          args = params)
-    print(f"Result for C0: {res[0:3]} \n Result for C1: {res[3:6]}")
-    
-def task2_3(params):
-    print("Task 2.3:")
-    
-    initial_vals = np.random.uniform(low=-1, high=1, size=9)
-    res = optimize.fsolve(func = calc_twoshocks, 
-                          x0 = initial_vals, 
-                          args = params)
-    
-    print(f"Result for C0: {res[0:3]} \n Result for C1: {res[3:6]} \n Result for C2: {res[6:9]}")
-    
+###############################################################################
+###############################################################################
+###############################################################################
+
 def run_A2():
     
     # Task 2.1 
@@ -163,11 +156,11 @@ def run_A2():
             "phi1": 1.5,
             "phi2": 0.2}
     
-    ###########################################################################
+    ###############################
     # Task 2.2
     print("Task 2.2:")
     
-    # Intital values are random draws
+    # Intital values are random draws, 6 values since only one shock
     initial_vals = np.random.uniform(low=-1, high=1, size=6)
     
     # Running fsolve on the function with one shock
@@ -180,7 +173,7 @@ def run_A2():
     
     """
     The values for C_0 are the same as from Assingment 1. All of them are 0
-    which makes sense insofar sa that C_0 caputres those parameters of the
+    which makes sense insofar sa that C_0 captures those parameters of the
     model which are not influenced by any shocks. Thus if we were to assume
     all shocks to be 0, the outcome would be the same as last week where we
     did not have any shocks. 
@@ -191,6 +184,7 @@ def run_A2():
     # Same as above but assuming one output shock and one inflation shock
     print("Task 2.3:")
     
+    # 9 values since two shocks
     initial_vals = np.random.uniform(low=-1, high=1, size=9)
     res = optimize.fsolve(func = calc_twoshocks, 
                           x0 = initial_vals, 
