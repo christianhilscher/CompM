@@ -7,7 +7,6 @@ Created on Tue Jan  5 16:01:19 2021
 
 #Importing packages
 import numpy as np
-from  scipy.optimize import fsolve
 import matplotlib.pyplot as plt
 
 # Setup
@@ -133,7 +132,7 @@ plt.tight_layout()
 
 """
 The shock to output which we introduced to the model impacts both the output and the inflation rate of the economy directly. The latter less strongly (psi_epsilon,pi = 0.3) compared to the first (psi_epsilon,y= 1). Therefore, neither of them converges to any value, since the shocks do not converge.
-Expectiations , however, are based on the previous values as well as the learning algorithm and our shock, which is drawn from a normal distribution with mean zero. Due to the learning algorithm, the percieved law of motion converges to the actual law of motion due to the new information that is incorporated each period. We can see that in the agents expectations for output and inflation which converge to the MSV of these values, i.e., zero.
-As Expectations converge, so does the nominal interest rate, as it is only a function of parameters and expectations of future realizations.
-Further, we can observe, that the shocks to our economy do not have a visible impact on our expectations after a short time period.
+Expectiations, however, are based on the realized previous values, which depends on the shock, as well as the learning algorithm. Due to the learning algorithm, the percieved law of motion converges to the actual law of motion additional information is accumulated by the agent in each each period. We can see that in the agents expectations for output and inflation which converge to the MSV of these values without a shock, since the shock is drawn from a standard normal distribution with mean zero.
+As Expectations converge, so does the nominal interest rate, as it is only a function of parameters and expectations of future realizations and therefore unaffected by the shock.
+Further, we can observe, that the shocks to our economy do not have a visible impact on our expectations after a short time period. Therefore, one could say, that agents learn the ALM relatively quickly and then stick to it. 
 """
