@@ -14,6 +14,11 @@ out = dir / 'output'
 #* simulation functions 
 
 def setup(T):
+    '''
+    Set up the baseline parameters and first guesses. 
+    
+    *T = number of periods to be simulated
+    '''
     #set up estimates for C0 and C1 (randomly drawn between -1 and 1)
     C0_hat = np.random.uniform(low = -1, high = 1, size = 3)
     C1_hat = np.random.uniform(low = -1, high = 1, size = 3)
@@ -33,6 +38,7 @@ def setup(T):
 def taylor(E_zt1, params):
     '''
     Calculate nominal interest rate following Taylor rule.
+    
     *E_zt1 = E[z_t+1] where z_t = [Y_t, pi_t, i_t]
     *params = dict of parameters obtained from setup()
     '''
@@ -113,7 +119,9 @@ def updating_C(C_old, R_new, shock, z, gamma = 0.05):
     return C_new
 
 def simul(T = 100000): 
-    
+    '''
+    Run simulation for T periods, default is 100000. 
+    '''
     #get everything for setup: first guess for C^hat, shock array and paramaters
     first_guess, shocks, params = setup(T)
     #set up a 3d array to save C^hat each period
@@ -191,8 +199,9 @@ Y, pi, i, C_hats, shocks = simul(T = T)
 #* Task 4: does solution differ from MSV solution? 
 finalC0C1 = C_hats[T-1]
 '''
-Indeed, the matrix C^hat is the same as the MSV solution in Assignment 2 for C0 and C1. 
-The steady state is C0 = [0, 0, 0] in each element and C1 = [1, 0.3, 0].
+Indeed, the matrix C^hat is the same as the MSV solution in Assignment 2 for C0 and C1 - i.e. the agents learn 
+the MSV solution through this learning algorithm. 
+The steady state is C0 = [0, 0, 0] and C1 = [1, 0.3, 0].
 '''
 
 #* Task 5: Plots
@@ -204,4 +213,21 @@ E_pit1 = C_hats[:, 0, 1]
 series_list = [Y, pi, i, E_Yt1, E_pit1, shocks]
 subtitles_list = ['Output', 'Inflation', 'Nominal Interest Rate', 'Expected Output', 'Expected Inflation', 
                     'Shocks to Output']
-plot = plot(series_list, T, subtitles_list)
+#produce plot using plotting function defined above and relevant series
+plot(series_list, T, subtitles_list)
+
+'''
+The figure shows that expected output, inflation and the nominal interest rate converge to the 
+MSV solution, which is 0. This is because agents form expectations based on the steady state part 
+of the model, namely C0. Similarly, the nominal interest rate only depends on these expecations 
+and thus also only on C0 and is not affected by the output shock. This is also seen in the solution 
+for C1 in which the reaction of nominal interest to the output shock is shown to be zero. 
+However, we also clearly see that the realized series for output and inflation do not converge to 
+a steady state but rather mimic the output shock. The former series does so in a one-to-one manner
+as the shock is affecting output with a factor of 1 (first element of C1). Inflation, however, 
+only reacts with a factor of 0.3 (second element of C1), which is why the magnitude of the values of 
+inflation is lower than the values of output and shock. 
+Concluding, we can clearly see the relationship between the different state variables and the output
+shock as well as the fact the the mean zero nature of the shock leads to no reaction of agents' 
+expectations to the shock. 
+'''
