@@ -6,7 +6,7 @@ Florian Fickler -- 1545713
 import pandas as pd
 from statsmodels.formula.api import ols
 
-# 1.2: Read in the data
+# 1.2 Read in the data
 # Forecast Data
 forecast = pd.read_csv(r'C:\Users\Flori\OneDrive\Documents\GitHub\CompM\A5\\Mean_UNEMP_Level_csv-export.csv', sep=';', decimal= ',')
 
@@ -43,7 +43,7 @@ forecast_quater.drop(['Year' ,'Quater'])
 # Set Date as Index
 forecast_quater['DATE'] = pd.PeriodIndex(forecast_quater['DATE'], freq='Q')
 
-# 1.5. Merge both Datasets
+# 1.5 Merge both Datasets
 A5_data = pd.concat([uer_quater, forecast_quater], axis=0)
 
 # 1.6 Create new Variables
@@ -59,7 +59,7 @@ A5_data['fc_revision'] = A5_data['UN_EMP5'] - A5_data['UN_EMP5_lag']
 
 # 1.7 OLS regression
 # Define OLS function
-reg = ols(formula = 'A5_data[fc_error] A5_data[fc_revision]', data = A5_data)
+reg = ols(formula = 'A5_data[fc_error] ~ A5_data[fc_revision]', data = A5_data)
 
 # Fit the OLS with robust SE
 fit = reg.fit(cov_type = 'HAC', cov_kwds = {'maxlags' : 3})
@@ -67,11 +67,11 @@ fit = reg.fit(cov_type = 'HAC', cov_kwds = {'maxlags' : 3})
 # Print summary statistics
 print(fit.summary())
 
-# 1.8
+# 1.8 Interpretation
 
 '''
 
-
+Coibion and Gorodnychenko (2015) find a sig. and positive relationship  with inflation, compare and interprete this one:
 
 '''
 
