@@ -12,8 +12,8 @@ First the individual functions are defined.
 
 
 from pathlib import Path
-import numpy as np
 import pandas as pd
+import statsmodels.api as sm
 
 ###############################################################################
 # Specifying paths
@@ -57,6 +57,23 @@ def adapt_merge_frames(dataf_unemp, dataf_forecast):
 df_unemp = pd.read_csv("UNRATE.csv")
 df_forecast = pd.read_csv("Mean_UNEMP_Level.csv")
 
+# Merge dataframes
 df = adapt_merge_frames(df_unemp, df_forecast)
 
-df
+# Shift around
+df["y"] = df["UNRATE"].shift(-3) - df["UNEMP5"]
+df["X"] = df["UNEMP5"] - df["UNEMP6"].shift(+1)
+
+# Drop missings
+missing = df["X"].isna() | df["y"].isna()
+df = df[~missing]
+
+# Define arrays for estimation
+y = df["y"]
+X = df["X"]
+X = sm.add_constant(X)
+
+# Estimation
+modl = sm.OLS(y, X)
+res = modl.fit(cov_type = 'HAC', cov_kwds = {'maxlags' : 3})
+print(res.summary())
