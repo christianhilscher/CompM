@@ -1,8 +1,17 @@
 """
-03.01.2021
+10.01.2021
 
-Second version of solving Assignment 3 which is to be handed in
+Christian Hilscher
+UniMA Matr. #: 1570550
+UniHD #: 6000506
+
+Final version of solving Assignment 3 which is to be handed in
+First the individual functions are defined.
+At the end there is a function called "run_A3()" which also contains the 
+solutions as comments.
+
 """
+
 
 from pathlib import Path
 import numpy as np
@@ -181,12 +190,19 @@ def run_A3(output_path):
     
     # Task 3.6
     """
-    The output shock has an influence on both output and inlfation. That's why
-    actual output and inflation vary over time. Nominal interest rate however
-    is not influenced and therefore quickly converges to 0.
-    Epxected output and inflation also converge quite quickly to their steady 
-    state which is 0.
-    The shocks to output vary over time since they are drawn ~ N(0, 1). 
+    The output shock has an influence on both output and inflation. That's why
+    actual output and inflation vary over time. However, as seen on the y-axis
+    of the respective graphs, output shocks affect output by a factor of 1 
+    while inflation is only affected by a factor of 0.3. This can be seen in
+    the smaller magnitudes of the y-values of inflation compared to output.
+    This also corresponds to the coefficients of the C1 matrix.
+    Nominal interest rate however is not influenced by the output shock and 
+    therefore quickly converges to 0.
+    Expected output and inflation also converge quite quickly to the steady 
+    state which is 0. That's because agents base their expectations on the 
+    steady state part, C0. 
+    The shocks to output vary over time since they are ~ N(0, 1). Since they
+    have mean zero, the agent's expectations are not influenced by the shocks.
     """
 
 
