@@ -88,32 +88,6 @@ A simple way of interpreting beta, would be to caracterise it as the ammount of 
 The latter one can be explained with the use of sticky information model (e.g. Mankiw and Reis (2002)), where as written above, the beta can be mapped into a degree of infomation rigidity lambda. Relatively simple, lambda stands for the probabilty of aquring new information. An increase in beta, then simply reduces the probabilty, that an agent will acquire new information in a given period, and makes it more likely, that he will miss out on updating his expectations.
 
 In imperfect information models (e.g. Woodford (2001)) however, we can map beta into a different meassure of information rigidities. Assuming that agents update, but rather lack some information, beta can then be seen as a meassure of how much of this information is missing. Therefore a larger beta would translate in more imperfect information and in less informed agents.
-
 '''
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
