@@ -76,7 +76,6 @@ Now the independent variable: the forecast of x_(t+3) in period t-1 is 4 (!) qua
 We lose 1 period here obviously (the first one).
 '''
 complete['independent'] = complete['UNEMP5'] - complete['UNEMP6'].shift(1)
-sum(complete['independent'].isnull())
 
 #* 7.
 # Estimation
