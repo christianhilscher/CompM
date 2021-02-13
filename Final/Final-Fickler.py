@@ -60,16 +60,13 @@ def Q2(guess):
     # returning the difference
     return diff
 
-# Setting up the guessed values
-guess = [1,2,3,4]
-
 # Executing the Function with guesses as inputs
-diff = Q2(guess)
+diff = Q2([1,2,3,4])
 print("The difference between the guessed and implied values are: ", diff)
 
 # =============================================================================
 # # 3.Using Fsolve to find the SS when there is no shock
-SteadyState_nocons = fsolve(Q2, guess)
+SteadyState_nocons = fsolve(Q2, [1,2,3,4])
 print("The SS without a Shock is: ", SteadyState_nocons)
 
 # =============================================================================
@@ -100,12 +97,141 @@ def Q4(F_guess):
 # =============================================================================
 # 5.
 # Set up some guess values for F
-guess_F  =np.array([[5],[6],[7],[8]])
+
 
 # Call function Q4
-F, Q = Q4(guess_F)
+F, Q = Q4(np.array([[5],[6],[7],[8]]))
 
+# General Solution
+# z_t = F*z_tminus1 + Q * u_t
 
-    
 # =============================================================================
-# Q5 
+# 6.
+# Saving the corrosponding vectors for the MSV solution
+# z_t = C_mu*mu_neg1 + C_y*y_tneg1 + C_pi*pi_tneg1 + C_eps*eps_t^mu + C_eps_i*eps_t^i
+# Vectors for the lagged variables are stored in each column of F
+C_mu = F[:, 0]
+C_y = F[:, 1]
+C_pi = F[:, 2]
+C_i = F[:, 3]
+
+# Those for the white noise terms are stored in Q
+C_eps_mu = Q[:, 0]
+C_eps_i = Q[:, 3]
+
+# =============================================================================
+# 7. Calculating Impulse Responses for epsilon_mu
+# First set up number of periods and empty arrays
+N = 30
+# For the Noise
+epsilon_mu1 = np.zeros(N)
+epsilon_i1 = np.zeros(N)
+                     
+# For the variables
+mu1 = np.zeros(N)
+y1 = np.zeros(N)
+pi1 = np.zeros(N)
+i1 = np.zeros(N)
+
+# Insert Impulse
+epsilon_mu1[0] =  0.01                 
+
+# for loop to go through 30 periods
+for j in range(N):
+    mu1[j],y1[j],pi1[j],i1[j] = [C_mu[hh]*mu1[j-1] + 
+                             C_y[hh]*y1[j-1] + 
+                             C_pi[hh]*pi1[j-1] + 
+                             C_i[hh]*i1[j-1] + 
+                             C_eps_mu[hh]*epsilon_mu1[j] + 
+                             C_eps_i[hh]*epsilon_i1[j]                               
+                               for hh in range(4)]
+
+# =============================================================================
+# 8. Calculating Impulse Responses for epsilon_i
+# First set up number of periods and empty arrays
+N = 30
+# For the Noise
+epsilon_mu2 = np.zeros(N)
+epsilon_i2 = np.zeros(N)
+                     
+# For the variables
+mu2 = np.zeros(N)
+y2 = np.zeros(N)
+pi2 = np.zeros(N)
+i2 = np.zeros(N)
+
+# Insert Impulse
+epsilon_i2[0] =  0.01                 
+
+# for loop to go through 30 periods
+for j in range(N):
+    mu2[j],y2[j],pi2[j],i2[j] = [C_mu[hh]*mu2[j-1] + 
+                             C_y[hh]*y2[j-1] + 
+                             C_pi[hh]*pi2[j-1] + 
+                             C_i[hh]*i2[j-1] + 
+                             C_eps_mu[hh]*epsilon_mu2[j] + 
+                             C_eps_i[hh]*epsilon_i2[j]                               
+                               for hh in range(4)]
+
+# =============================================================================
+# 9. Creating Figures
+
+#Figure 1 for the shock from Q7
+plt.figure("Impulse Response Epsilon_Mu")
+
+plt.subplot(4,1,1)
+plt.title("Inflation Shock")
+plt.xlabel("t")
+plt.ylabel(r"$\mu$")
+plt.plot([mu1[t] for t in range(N)], linewidth=4, color='red')
+plt.axis('auto')
+
+plt.subplot(4,1,2)
+plt.title("Output")
+plt.xlabel("t")
+plt.ylabel(r"$y$")
+plt.plot([y1[t] for t in range(N)], linewidth=4, color='blue')
+
+plt.subplot(4,1,3)
+plt.title("Inflation")
+plt.xlabel("t")
+plt.ylabel(r"$\pi$")
+plt.plot([pi1[t] for t in range(N)], linewidth=4, color='brown')
+
+plt.subplot(4,1,4)
+plt.title("Nominal Interest Rate")
+plt.xlabel("t")
+plt.ylabel(r"$i$")
+plt.plot([i1[t] for t in range(N)], linewidth=4, color='black')
+
+plt.tight_layout()
+
+#Figure 1 for the shock from Q8
+plt.figure("Impulse Response Epsilon_I")
+
+plt.subplot(4,1,1)
+plt.title("Inflation Shock")
+plt.xlabel("t")
+plt.ylabel(r"$\mu$")
+plt.plot([mu2[t] for t in range(N)], linewidth=4, color='red')
+plt.axis('auto')
+
+plt.subplot(4,1,2)
+plt.title("Output")
+plt.xlabel("t")
+plt.ylabel(r"$y$")
+plt.plot([y2[t] for t in range(N)], linewidth=4, color='blue')
+
+plt.subplot(4,1,3)
+plt.title("Inflation")
+plt.xlabel("t")
+plt.ylabel(r"$\pi$")
+plt.plot([pi2[t] for t in range(N)], linewidth=4, color='brown')
+
+plt.subplot(4,1,4)
+plt.title("Nominal Interest Rate")
+plt.xlabel("t")
+plt.ylabel(r"$i$")
+plt.plot([i2[t] for t in range(N)], linewidth=4, color='black')
+
+plt.tight_layout()
